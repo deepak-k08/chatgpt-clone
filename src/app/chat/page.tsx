@@ -1,3 +1,6 @@
+//file-path: chatgpt-clone-mobile/src/app/chat/page.tsx
+
+
 import { z } from "zod";
 import { router, publicProcedure } from "../../server/api/trpc";
 import { supabase } from "../../server/supabaseClient";

@@ -1,3 +1,7 @@
+// file-path: chatgpt-clone-mobile/src/server/api/routers/example.ts
+
+
+
 import { publicProcedure, router } from '../trpc';
 import { z } from 'zod';
 

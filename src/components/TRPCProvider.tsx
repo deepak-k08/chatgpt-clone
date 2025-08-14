@@ -1,3 +1,5 @@
+// file-path: chatgpt-clone-mobile/src/components/TRPCProvider.tsx
+
 'use client';
 
 import { trpc } from '@/utils/trpc';
