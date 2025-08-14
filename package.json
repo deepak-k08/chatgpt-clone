@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.55.0",
     "bootstrap": "^5.3.7",
     "dotenv": "^17.2.1",

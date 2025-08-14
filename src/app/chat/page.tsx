@@ -1,65 +1,78 @@
-//file-path: chatgpt-clone-mobile/src/app/chat/page.tsx
+// File path: src/app/chat/page.tsx
 
+"use client";
 
-import { z } from "zod";
-import { router, publicProcedure } from "../../server/api/trpc";
-import { supabase } from "../../server/supabaseClient";
+import React, { useState, useRef } from "react";
+import { Button, Form } from "react-bootstrap";
 
-// Fetch messages for a given session
-export const chatRouter = router({
-  getMessages: publicProcedure
-    .input(z.object({ session_id: z.string() }))
-    .query(
-      async ({
-        input,
-      }: {
-        input: { session_id: string };
-      }) => {
-        const { data, error } = await supabase
-          .from("messages")
-          .select("*")
-          .eq("session_id", input.session_id)
-          .order("created_at", { ascending: true });
+export default function ChatPage() {
+  const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
+  const [input, setInput] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-        if (error) throw new Error(error.message);
-        return data;
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const sendMessage = async () => {
+    if (!input.trim() || isSending) return;
+
+    setIsSending(true);
+    const userMessage = { role: "user", content: input };
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
+
+    try {
+      const res = await fetch("/api/trpc/message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: input }),
+      });
+
+      const data = await res.json();
+      if (data?.assistant) {
+        setMessages((prev) => [...prev, { role: "assistant", content: data.assistant }]);
       }
-    ),
+    } catch (error) {
+      console.error("Error sending message:", error);
+    } finally {
+      setIsSending(false);
+      scrollToBottom();
+    }
+  };
 
-  sendMessage: publicProcedure
-    .input(
-      z.object({
-        content: z.string(),
-        session_id: z.string(),
-      })
-    )
-    .mutation(async ({ input }) => {
-      // Insert user message
-      const { error: insertUserError } = await supabase
-        .from("messages")
-        .insert([
-          {
-            role: "user",
-            content: input.content,
-            session_id: input.session_id,
-          },
-        ]);
-      if (insertUserError) throw new Error(insertUserError.message);
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
 
-      // Simulate AI reply
-      const aiReply = `You said: ${input.content}`;
+  return (
+    <div className="container py-4">
+      <div className="border rounded p-3 mb-3" style={{ height: "70vh", overflowY: "auto" }}>
+        {messages.map((msg, i) => (
+          <div key={i} className={`mb-2 ${msg.role === "user" ? "text-primary" : "text-success"}`}>
+            <strong>{msg.role}:</strong> {msg.content}
+          </div>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
 
-      const { error: insertAiError } = await supabase
-        .from("messages")
-        .insert([
-          {
-            role: "assistant",
-            content: aiReply,
-            session_id: input.session_id,
-          },
-        ]);
-      if (insertAiError) throw new Error(insertAiError.message);
-
-      return { success: true };
-    }),
-});
+      <Form className="d-flex gap-2" onSubmit={(e) => e.preventDefault()}>
+        <Form.Control
+          type="text"
+          placeholder="Type your message..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyPress}
+          disabled={isSending}
+        />
+        <Button variant="primary" onClick={sendMessage} disabled={isSending}>
+          {isSending ? "Sending..." : "Send"}
+        </Button>
+      </Form>
+    </div>
+  );
+}
