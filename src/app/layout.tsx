@@ -1,6 +1,5 @@
-// file-path: chatgpt-clone-mobile/src/app/layout.tsx
-
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
