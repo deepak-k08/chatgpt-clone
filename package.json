@@ -11,6 +11,10 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.55.0",
+    "@tanstack/react-query": "^5.85.3",
+    "@trpc/client": "^11.4.4",
+    "@trpc/react-query": "^11.4.4",
+    "@trpc/server": "^11.4.4",
     "bootstrap": "^5.3.7",
     "bootstrap-icons": "^1.13.1",
     "dotenv": "^17.2.1",
