@@ -1,10 +1,12 @@
 "use client";
 
+import { useTheme } from "@/components/ThemeProvider";
 import React, { useState, useRef, useEffect } from "react";
 import { Button, Form, Container, Card, Row, Col, Spinner } from "react-bootstrap";
 import { v4 as uuidv4 } from 'uuid';
 
 export default function HomePage() {
+  const { theme, toggleTheme } = useTheme();
   const [messages, setMessages] = useState<{ role: string; content: string; timestamp?: Date; isStreaming?: boolean }[]>([]);
   const [input, setInput] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -33,7 +35,6 @@ export default function HomePage() {
     const currentInput = input;
     setInput("");
 
-    // Add empty AI message that will be streamed
     const aiMessageIndex = messages.length + 1;
     setMessages((prev) => [...prev, {
       role: "assistant",
@@ -43,7 +44,6 @@ export default function HomePage() {
     }]);
 
     try {
-      // Create abort controller for this request
       abortControllerRef.current = new AbortController();
 
       const response = await fetch('/api/chat/stream', {
@@ -180,18 +180,27 @@ export default function HomePage() {
   };
 
   return (
-    <div className="vh-100 d-flex flex-column" style={{ backgroundColor: '#f8f9fa' }}>
+    <div className="vh-100 d-flex flex-column bg-body-tertiary">
       {/* Header */}
-      <div className="border-bottom bg-white shadow-sm">
+      <div className="border-bottom bg-body shadow-sm">
         <Container fluid>
           <Row className="align-items-center py-3">
             <Col>
               <h4 className="mb-0 text-primary">
                 <i className="bi bi-chat-dots me-2"></i>
-                ChatGPT Clone
+                VākyaAI
               </h4>
             </Col>
             <Col xs="auto" className="d-flex gap-2">
+              <Button
+                variant="outline-secondary"
+                size="sm"
+                onClick={toggleTheme}
+                className="d-flex align-items-center"
+                title="Toggle theme"
+              >
+                <i className={`bi ${theme === 'light' ? 'bi-moon-stars-fill' : 'bi-sun-fill'}`}></i>
+              </Button>
               {isSending && (
                 <Button 
                   variant="outline-danger" 
@@ -236,7 +245,6 @@ export default function HomePage() {
                 <div key={i} className="mb-4">
                   <div className={`d-flex ${msg.role === "user" ? "justify-content-end" : "justify-content-start"}`}>
                     <div className={`position-relative ${msg.role === "user" ? "ms-5" : "me-5"}`} style={{ maxWidth: '80%' }}>
-                      {/* Avatar */}
                       <div className={`d-flex align-items-start ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
                         <div 
                           className={`rounded-circle d-flex align-items-center justify-content-center text-white me-2 ms-2 ${
@@ -251,12 +259,11 @@ export default function HomePage() {
                           {msg.role === "user" ? "U" : msg.role === "assistant" ? "AI" : "!"}
                         </div>
                         
-                        {/* Message Bubble */}
                         <Card 
                           className={`border-0 shadow-sm ${
                             msg.role === "user" 
                               ? "bg-primary text-white" 
-                              : "bg-white"
+                              : "bg-body-secondary"
                           }`}
                           style={{ 
                             borderRadius: msg.role === "user" ? "18px 18px 4px 18px" : "18px 18px 18px 4px"
@@ -294,7 +301,7 @@ export default function HomePage() {
       </div>
 
       {/* Input Area */}
-      <div className="border-top bg-white shadow">
+      <div className="border-top bg-body shadow">
         <Container fluid>
           <div className="py-3">
             <Form onSubmit={(e) => e.preventDefault()}>

@@ -1,3 +1,6 @@
+/*  file: chatgpt-clone-mobile/src/app/globals.css */
+
+
 /* Custom scrollbar */
 .overflow-auto::-webkit-scrollbar {
   width: 6px;
@@ -70,4 +73,17 @@
 /* Smooth text appearance for streaming */
 .card-body {
   transition: none; /* Disable transition for streaming content */
+}
+
+[data-bs-theme="dark"] .overflow-auto::-webkit-scrollbar-thumb {
+  background: #495057;
+}
+
+[data-bs-theme="dark"] .overflow-auto::-webkit-scrollbar-thumb:hover {
+  background: #6c757d;
+}
+
+/* Dark mode streaming cursor */
+[data-bs-theme="dark"] .streaming-cursor {
+  color: #adb5bd; /* Lighter color for dark background */
 }

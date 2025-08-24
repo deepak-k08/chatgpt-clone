@@ -1,3 +1,5 @@
+//file: chatgpt-clone-mobile/src/server/api/routers/chat.ts
+
 import { z } from "zod";
 import { router, publicProcedure } from "../trpc";
 import { supabase } from "../../supabaseClient";
@@ -49,7 +51,7 @@ export const chatRouter = router({
       // 2. Generate AI reply using Gemini
       try {
         const model = genAI.getGenerativeModel({ 
-          model: "gemini-2.0-flash-exp",
+          model: "gemini-2.5-pro",
           generationConfig: {
             maxOutputTokens: 2048,
             temperature: 0.7,
